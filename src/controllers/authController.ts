@@ -1,24 +1,60 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import prisma from '../utils/prisma';
 
-export const register = async (req: Request, res: Response): Promise<Response> => {
+declare global {
+  namespace Express {
+    interface Request {
+      user?: any;
+    }
+  }
+}
+
+// Register new user
+export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     const { name, email, password } = req.body;
 
     // Validation
     if (!name || !email || !password) {
-      return res.status(400).json({ message: 'Name, email and password are required' });
+      res.status(400).json({ 
+        success: false,
+        message: 'Name, email and password are required' 
+      });
+      return;
+    }
+
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      res.status(400).json({ 
+        success: false,
+        message: 'Invalid email format' 
+      });
+      return;
+    }
+
+    // Password length validation
+    if (password.length < 6) {
+      res.status(400).json({ 
+        success: false,
+        message: 'Password must be at least 6 characters long' 
+      });
+      return;
     }
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
-      where: { email },
+      where: { email: email.toLowerCase() },
     });
 
     if (existingUser) {
-      return res.status(400).json({ message: 'User already exists with this email' });
+      res.status(400).json({ 
+        success: false,
+        message: 'User already exists with this email' 
+      });
+      return;
     }
 
     // Hash password
@@ -28,8 +64,8 @@ export const register = async (req: Request, res: Response): Promise<Response> =
     // Create user
     const user = await prisma.user.create({
       data: {
-        name,
-        email,
+        name: name.trim(),
+        email: email.toLowerCase().trim(),
         password: hashedPassword,
       },
       select: {
@@ -47,40 +83,57 @@ export const register = async (req: Request, res: Response): Promise<Response> =
       { expiresIn: '7d' }
     );
 
-    return res.status(201).json({
+    res.status(201).json({
+      success: true,
       message: 'User registered successfully',
       token,
       user,
     });
   } catch (error) {
     console.error('Registration error:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ 
+      success: false,
+      message: 'Internal server error' 
+    });
   }
 };
 
-export const login = async (req: Request, res: Response): Promise<Response> => {
+// Login user
+export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
 
     // Validation
     if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required' });
+      res.status(400).json({ 
+        success: false,
+        message: 'Email and password are required' 
+      });
+      return;
     }
 
     // Find user
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: { email: email.toLowerCase().trim() },
     });
 
     if (!user) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      res.status(401).json({ 
+        success: false,
+        message: 'Invalid email or password' 
+      });
+      return;
     }
 
     // Check password
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      res.status(401).json({ 
+        success: false,
+        message: 'Invalid email or password' 
+      });
+      return;
     }
 
     // Generate JWT
@@ -90,7 +143,8 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
       { expiresIn: '7d' }
     );
 
-    return res.json({
+    res.json({
+      success: true,
       message: 'Login successful',
       token,
       user: {
@@ -101,32 +155,156 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
     });
   } catch (error) {
     console.error('Login error:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ 
+      success: false,
+      message: 'Internal server error' 
+    });
   }
 };
 
-export const verifyToken = async (req: Request, res: Response): Promise<Response> => {
+// Verify token and get current user
+export const verifyToken = async (req: Request, res: Response): Promise<void> => {
   try {
-    const token = req.headers.authorization?.split(' ')[1];
+    const authHeader = req.headers.authorization;
 
-    if (!token) {
-      return res.status(401).json({ message: 'No token provided' });
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      res.status(401).json({ 
+        success: false,
+        message: 'No token provided' 
+      });
+      return;
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
+    const token = authHeader.split(' ')[1];
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { 
+      userId: string;
+      email: string;
+    };
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
-      select: { id: true, email: true, name: true },
+      select: { 
+        id: true, 
+        email: true, 
+        name: true,
+        createdAt: true 
+      },
     });
 
     if (!user) {
-      return res.status(401).json({ message: 'User not found' });
+      res.status(401).json({ 
+        success: false,
+        message: 'User not found' 
+      });
+      return;
     }
 
-    return res.json({ user });
+    res.json({ 
+      success: true,
+      user 
+    });
   } catch (error) {
     console.error('Token verification error:', error);
-    return res.status(401).json({ message: 'Invalid token' });
+    res.status(401).json({ 
+      success: false,
+      message: 'Invalid or expired token' 
+    });
+  }
+};
+
+// Logout user
+export const logout = async (req: Request, res: Response): Promise<void> => {
+  try {
+    // In a real app, you might want to invalidate the token here
+    res.status(200).json({
+      success: true,
+      message: 'Logged out successfully'
+    });
+  } catch (error) {
+    console.error('Logout error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error logging out',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+};
+
+// Get current user
+export const getCurrentUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    // The user should be attached to the request by the auth middleware
+    if (!req.user) {
+      res.status(401).json({
+        success: false,
+        message: 'Not authenticated'
+      });
+      return;
+    }
+
+    // Return user data (excluding password)
+    const { password, ...userWithoutPassword } = req.user;
+    res.status(200).json({
+      success: true,
+      user: userWithoutPassword
+    });
+  } catch (error) {
+    console.error('Get current user error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching user data',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+};
+
+// Get user profile
+export const getProfile = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.split(' ')[1];
+
+    if (!token) {
+      res.status(401).json({ 
+        success: false,
+        message: 'No token provided' 
+      });
+      return;
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { 
+      userId: string 
+    };
+
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.userId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    if (!user) {
+      res.status(404).json({ 
+        success: false,
+        message: 'User not found' 
+      });
+      return;
+    }
+
+    res.json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    console.error('Get profile error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Internal server error' 
+    });
   }
 };

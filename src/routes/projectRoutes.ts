@@ -5,6 +5,7 @@ import {
   createProject,
   updateProject,
   deleteProject,
+  getProjectStats,
 } from '../controllers/projectController';
 import { authMiddleware } from '../middleware/authMiddleware';
 
@@ -14,7 +15,8 @@ const router = express.Router();
 router.get('/', getAllProjects);
 router.get('/:id', getProjectById);
 
-// Private routes
+// Private routes (requires authentication)
+router.get('/dashboard/stats', authMiddleware, getProjectStats);
 router.post('/', authMiddleware, createProject);
 router.put('/:id', authMiddleware, updateProject);
 router.delete('/:id', authMiddleware, deleteProject);

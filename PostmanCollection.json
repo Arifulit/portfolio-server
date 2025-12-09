@@ -1,15 +1,35 @@
 {
   "info": {
-    "name": "Portfolio Project API",
-    "description": "Complete API collection for Portfolio Project with authentication",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    "_postman_id": "portfolio-api-2025",
+    "name": "Portfolio Project API - Complete Collection",
+    "description": "Complete API collection for Portfolio Project with Authentication, Blogs, and Projects management",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
   },
   "item": [
     {
-      "name": "1. Authentication",
+      "name": "🔐 Authentication",
+      "description": "User authentication endpoints including register, login, and token verification",
       "item": [
         {
-          "name": "Register",
+          "name": "Register New User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.token) {",
+                  "        pm.collectionVariables.set('auth_token', response.token);",
+                  "        console.log('✅ Token saved:', response.token);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -20,18 +40,23 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\"\n}"
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/auth/register",
               "host": ["{{base_url}}"],
               "path": ["api", "auth", "register"]
             },
-            "description": "Register a new user"
+            "description": "Register a new user account. Password must be at least 6 characters."
           },
           "response": [
             {
-              "name": "Success Response",
+              "name": "Success - User Registered",
               "originalRequest": {
                 "method": "POST",
                 "header": [
@@ -42,7 +67,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\"\n}"
+                  "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
                 },
                 "url": {
                   "raw": "{{base_url}}/api/auth/register",
@@ -59,12 +84,30 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n    \"message\": \"User registered successfully\",\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n    \"user\": {\n        \"id\": \"cl4x6z8q80000q4xq3q5q6r7s\",\n        \"name\": \"John Doe\",\n        \"email\": \"john@example.com\",\n        \"createdAt\": \"2025-12-08T09:30:00.000Z\"\n    }\n}"
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"User registered successfully\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbTRxOHo4cTgwMDAwcTR4cTNxNXE2cjdzIiwiZW1haWwiOiJqb2huQGV4YW1wbGUuY29tIiwiaWF0IjoxNzMzNzI3MDAwLCJleHAiOjE3MzQzMzE4MDB9.xyz\",\n  \"user\": {\n    \"id\": \"cm4q8z8q80000q4xq3q5q6r7s\",\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"createdAt\": \"2025-12-09T04:30:00.000Z\"\n  }\n}"
             }
           ]
         },
         {
           "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.token) {",
+                  "        pm.collectionVariables.set('auth_token', response.token);",
+                  "        console.log('✅ Token saved:', response.token);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -75,18 +118,23 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\"\n}"
+              "raw": "{\n  \"email\": \"admin@portfolio.com\",\n  \"password\": \"admin123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/auth/login",
               "host": ["{{base_url}}"],
               "path": ["api", "auth", "login"]
             },
-            "description": "Login with email and password"
+            "description": "Login with email and password. Default admin credentials: admin@portfolio.com / admin123456"
           },
           "response": [
             {
-              "name": "Success Response",
+              "name": "Success - Login",
               "originalRequest": {
                 "method": "POST",
                 "header": [
@@ -97,7 +145,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\"\n}"
+                  "raw": "{\n  \"email\": \"admin@portfolio.com\",\n  \"password\": \"admin123456\"\n}"
                 },
                 "url": {
                   "raw": "{{base_url}}/api/auth/login",
@@ -114,7 +162,8 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n    \"user\": {\n        \"id\": \"cl4x6z8q80000q4xq3q5q6r7s\",\n        \"name\": \"John Doe\",\n        \"email\": \"john@example.com\"\n    }\n}"
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Login successful\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbTRxOHo4cTgwMDAwcTR4cTNxNXE2cjdzIiwiZW1haWwiOiJhZG1pbkBwb3J0Zm9saW8uY29tIiwiaWF0IjoxNzMzNzI3MDAwLCJleHAiOjE3MzQzMzE4MDB9.xyz\",\n  \"user\": {\n    \"id\": \"cm4q8z8q80000q4xq3q5q6r7s\",\n    \"email\": \"admin@portfolio.com\",\n    \"name\": \"Admin User\"\n  }\n}"
             }
           ]
         },
@@ -125,7 +174,8 @@
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{auth_token}}"
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
               }
             ],
             "url": {
@@ -133,71 +183,124 @@
               "host": ["{{base_url}}"],
               "path": ["api", "auth", "verify"]
             },
-            "description": "Verify JWT token"
+            "description": "Verify if the JWT token is valid"
           },
-          "response": [
-            {
-              "name": "Success Response",
-              "originalRequest": {
-                "method": "GET",
-                "header": [
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{auth_token}}"
-                  }
-                ],
-                "url": {
-                  "raw": "{{base_url}}/api/auth/verify",
-                  "host": ["{{base_url}}"],
-                  "path": ["api", "auth", "verify"]
-                }
-              },
-              "status": "OK",
-              "code": 200,
-              "_postman_previewlanguage": "json",
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": "{\n    \"user\": {\n        \"id\": \"cl4x6z8q80000q4xq3q5q6r7s\",\n        \"email\": \"john@example.com\",\n        \"name\": \"John Doe\"\n    }\n}"
-            }
-          ]
+          "response": []
+        },
+        {
+          "name": "Get User Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "profile"]
+            },
+            "description": "Get current user profile information"
+          },
+          "response": []
         }
       ]
     },
     {
-      "name": "2. Blogs",
+      "name": "📝 Blogs",
+      "description": "Blog management endpoints - public and private routes",
       "item": [
         {
-          "name": "Get All Blogs",
+          "name": "Get All Blogs (Public)",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/api/blogs",
+              "raw": "{{base_url}}/api/blogs?page=1&limit=10",
               "host": ["{{base_url}}"],
-              "path": ["api", "blogs"]
+              "path": ["api", "blogs"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items per page"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Search term",
+                  "disabled": true
+                }
+              ]
             },
-            "description": "Get all published blog posts"
-          }
+            "description": "Get all published blog posts with pagination and search"
+          },
+          "response": []
         },
         {
-          "name": "Get Blog by ID",
+          "name": "Get Blog by ID (Public)",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/api/blogs/1",
+              "raw": "{{base_url}}/api/blogs/sample-blog-1",
               "host": ["{{base_url}}"],
-              "path": ["api", "blogs", "1"]
+              "path": ["api", "blogs", "sample-blog-1"]
             },
             "description": "Get a single blog post by ID"
-          }
+          },
+          "response": []
         },
         {
-          "name": "Create Blog (Auth Required)",
+          "name": "Get All Blogs for Dashboard (Private)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/blogs/dashboard/all?page=1&limit=10&status=all",
+              "host": ["{{base_url}}"],
+              "path": ["api", "blogs", "dashboard", "all"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "status",
+                  "value": "all",
+                  "description": "all | published | draft"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Get all blogs including unpublished (requires authentication)"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Blog (Private)",
           "request": {
             "method": "POST",
             "header": [
@@ -207,23 +310,30 @@
               },
               {
                 "key": "Authorization",
-                "value": "Bearer {{auth_token}}"
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"title\": \"My First Blog Post\",\n    \"content\": \"This is the content of my first blog post...\",\n    \"description\": \"A brief description of the blog post\",\n    \"image\": \"https://example.com/images/blog1.jpg\",\n    \"published\": true\n}"
+              "raw": "{\n  \"title\": \"Getting Started with React 19\",\n  \"description\": \"Learn about the latest features in React 19\",\n  \"content\": \"React 19 introduces several exciting new features...\\n\\n## Key Features\\n- Server Components\\n- Improved Suspense\\n- Better Error Handling\\n\\nLet's explore each of these in detail.\",\n  \"image\": \"https://images.unsplash.com/photo-1633356122544-f134324a6cee\",\n  \"published\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/blogs",
               "host": ["{{base_url}}"],
               "path": ["api", "blogs"]
             },
-            "description": "Create a new blog post"
-          }
+            "description": "Create a new blog post (requires authentication)"
+          },
+          "response": []
         },
         {
-          "name": "Update Blog (Auth Required)",
+          "name": "Update Blog (Private)",
           "request": {
             "method": "PUT",
             "header": [
@@ -233,72 +343,142 @@
               },
               {
                 "key": "Authorization",
-                "value": "Bearer {{auth_token}}"
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"title\": \"Updated Blog Title\",\n    \"content\": \"Updated content...\",\n    \"description\": \"Updated description\",\n    \"image\": \"https://example.com/images/updated-blog.jpg\",\n    \"published\": false\n}"
+              "raw": "{\n  \"title\": \"Updated Blog Title\",\n  \"description\": \"Updated description\",\n  \"content\": \"Updated content goes here...\",\n  \"published\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{base_url}}/api/blogs/1",
+              "raw": "{{base_url}}/api/blogs/sample-blog-1",
               "host": ["{{base_url}}"],
-              "path": ["api", "blogs", "1"]
+              "path": ["api", "blogs", "sample-blog-1"]
             },
-            "description": "Update an existing blog post"
-          }
+            "description": "Update an existing blog post (requires authentication)"
+          },
+          "response": []
         },
         {
-          "name": "Delete Blog (Auth Required)",
+          "name": "Toggle Publish Status (Private)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/blogs/sample-blog-1/publish",
+              "host": ["{{base_url}}"],
+              "path": ["api", "blogs", "sample-blog-1", "publish"]
+            },
+            "description": "Toggle blog publish/unpublish status (requires authentication)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Blog (Private)",
           "request": {
             "method": "DELETE",
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{auth_token}}"
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/blogs/1",
+              "raw": "{{base_url}}/api/blogs/sample-blog-1",
               "host": ["{{base_url}}"],
-              "path": ["api", "blogs", "1"]
+              "path": ["api", "blogs", "sample-blog-1"]
             },
-            "description": "Delete a blog post"
-          }
+            "description": "Delete a blog post (requires authentication)"
+          },
+          "response": []
         }
       ]
     },
     {
-      "name": "3. Projects",
+      "name": "💼 Projects",
+      "description": "Project management endpoints - public and private routes",
       "item": [
         {
-          "name": "Get All Projects",
+          "name": "Get All Projects (Public)",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/api/projects",
+              "raw": "{{base_url}}/api/projects?page=1&limit=10",
               "host": ["{{base_url}}"],
-              "path": ["api", "projects"]
+              "path": ["api", "projects"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items per page"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Search term",
+                  "disabled": true
+                }
+              ]
             },
-            "description": "Get all projects"
-          }
+            "description": "Get all projects with pagination and search"
+          },
+          "response": []
         },
         {
-          "name": "Get Project by ID",
+          "name": "Get Project by ID (Public)",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/api/projects/1",
+              "raw": "{{base_url}}/api/projects/sample-project-1",
               "host": ["{{base_url}}"],
-              "path": ["api", "projects", "1"]
+              "path": ["api", "projects", "sample-project-1"]
             },
             "description": "Get a single project by ID"
-          }
+          },
+          "response": []
         },
         {
-          "name": "Create Project (Auth Required)",
+          "name": "Get Project Statistics (Private)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/projects/dashboard/stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "projects", "dashboard", "stats"]
+            },
+            "description": "Get project statistics for dashboard (requires authentication)"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Project (Private)",
           "request": {
             "method": "POST",
             "header": [
@@ -308,23 +488,30 @@
               },
               {
                 "key": "Authorization",
-                "value": "Bearer {{auth_token}}"
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"title\": \"E-commerce Website\",\n    \"description\": \"A full-stack e-commerce platform\",\n    \"image\": \"https://example.com/images/project1.jpg\",\n    \"demoUrl\": \"https://ecommerce-demo.example.com\",\n    \"githubUrl\": \"https://github.com/username/ecommerce\",\n    \"technologies\": [\"React\", \"Node.js\", \"MongoDB\"],\n    \"published\": true\n}"
+              "raw": "{\n  \"title\": \"Social Media Dashboard\",\n  \"description\": \"A comprehensive social media analytics dashboard built with modern web technologies. Features real-time data updates, interactive charts, and responsive design.\",\n  \"thumbnail\": \"https://images.unsplash.com/photo-1460925895917-afdab827c52f\",\n  \"liveUrl\": \"https://social-dashboard.example.com\",\n  \"githubUrl\": \"https://github.com/username/social-dashboard\",\n  \"features\": [\n    \"Real-time analytics\",\n    \"Multi-platform integration\",\n    \"Custom reporting\",\n    \"User engagement tracking\",\n    \"Export data to CSV/PDF\"\n  ],\n  \"technologies\": [\n    \"Next.js\",\n    \"TypeScript\",\n    \"Tailwind CSS\",\n    \"Chart.js\",\n    \"PostgreSQL\",\n    \"Prisma\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/projects",
               "host": ["{{base_url}}"],
               "path": ["api", "projects"]
             },
-            "description": "Create a new project"
-          }
+            "description": "Create a new project (requires authentication)"
+          },
+          "response": []
         },
         {
-          "name": "Update Project (Auth Required)",
+          "name": "Update Project (Private)",
           "request": {
             "method": "PUT",
             "header": [
@@ -334,80 +521,112 @@
               },
               {
                 "key": "Authorization",
-                "value": "Bearer {{auth_token}}"
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"title\": \"Updated E-commerce Website\",\n    \"description\": \"An improved version of our e-commerce platform\",\n    \"image\": \"https://example.com/images/updated-project1.jpg\",\n    \"demoUrl\": \"https://ecommerce-v2.example.com\",\n    \"githubUrl\": \"https://github.com/username/ecommerce-v2\",\n    \"technologies\": [\"React\", \"Next.js\", \"Node.js\", \"MongoDB\"],\n    \"published\": true\n}"
+              "raw": "{\n  \"title\": \"Updated Project Title\",\n  \"description\": \"Updated project description\",\n  \"liveUrl\": \"https://updated-url.com\",\n  \"technologies\": [\"React\", \"Node.js\", \"MongoDB\"]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{base_url}}/api/projects/1",
+              "raw": "{{base_url}}/api/projects/sample-project-1",
               "host": ["{{base_url}}"],
-              "path": ["api", "projects", "1"]
+              "path": ["api", "projects", "sample-project-1"]
             },
-            "description": "Update an existing project"
-          }
+            "description": "Update an existing project (requires authentication)"
+          },
+          "response": []
         },
         {
-          "name": "Delete Project (Auth Required)",
+          "name": "Delete Project (Private)",
           "request": {
             "method": "DELETE",
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{auth_token}}"
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/projects/1",
+              "raw": "{{base_url}}/api/projects/sample-project-1",
               "host": ["{{base_url}}"],
-              "path": ["api", "projects", "1"]
+              "path": ["api", "projects", "sample-project-1"]
             },
-            "description": "Delete a project"
-          }
+            "description": "Delete a project (requires authentication)"
+          },
+          "response": []
         }
       ]
-    }
-  ],
-  "variable": [
-    {
-      "key": "base_url",
-      "value": "http://localhost:5000",
-      "type": "string",
-      "description": "Base URL for the API (default: http://localhost:5000)"
     },
     {
-      "key": "auth_token",
-      "value": "",
-      "type": "string",
-      "description": "JWT token obtained from login/register (will be set automatically after login/register)"
+      "name": "🏥 Health Check",
+      "description": "API health check endpoint",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": ["{{base_url}}"],
+              "path": [""]
+            },
+            "description": "Check if the API is running"
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "event": [
     {
       "listen": "prerequest",
       "script": {
+        "type": "text/javascript",
         "exec": [
-          "// You can add pre-request scripts here if needed"
-        ],
-        "type": "text/javascript"
+          "// Global pre-request script",
+          "console.log('🚀 Making request to:', pm.request.url.toString());"
+        ]
       }
     },
     {
       "listen": "test",
       "script": {
+        "type": "text/javascript",
         "exec": [
-          "// Set the auth_token variable from the login/register response",
-          "if (pm.response.code === 200 || pm.response.code === 201) {",
-          "    const response = pm.response.json();",
-          "    if (response.token) {",
-          "        pm.environment.set('auth_token', response.token);",
-          "    }",
+          "// Global test script",
+          "const response = pm.response.json();",
+          "",
+          "// Log response status",
+          "console.log('Response Status:', pm.response.code);",
+          "",
+          "// Auto-save token from login/register",
+          "if ((pm.response.code === 200 || pm.response.code === 201) && response.token) {",
+          "    pm.collectionVariables.set('auth_token', response.token);",
+          "    console.log('✅ Token automatically saved to collection variables');",
           "}"
-        ],
-        "type": "text/javascript"
+        ]
       }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "string"
     }
   ]
 }

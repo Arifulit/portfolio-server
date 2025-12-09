@@ -1,13 +1,18 @@
-import express from 'express';
-import { register, login, verifyToken } from '../controllers/authController';
+import { Router } from 'express';
+import { 
+  login, 
+  register, 
+  logout, 
+  getCurrentUser 
+} from '../controllers/authController';
+import { authMiddleware } from '../middleware/authMiddleware';
 
-const router = express.Router();
+const router = Router();
 
-// Public routes
+// Authentication routes
 router.post('/register', register);
 router.post('/login', login);
-
-// Protected route
-router.get('/verify', verifyToken);
+router.post('/logout', authMiddleware, logout);
+router.get('/me', authMiddleware, getCurrentUser);
 
 export default router;
