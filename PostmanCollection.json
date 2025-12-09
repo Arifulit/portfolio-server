@@ -1,0 +1,413 @@
+{
+  "info": {
+    "name": "Portfolio Project API",
+    "description": "Complete API collection for Portfolio Project with authentication",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            },
+            "description": "Register a new user"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/register",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "auth", "register"]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n    \"message\": \"User registered successfully\",\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n    \"user\": {\n        \"id\": \"cl4x6z8q80000q4xq3q5q6r7s\",\n        \"name\": \"John Doe\",\n        \"email\": \"john@example.com\",\n        \"createdAt\": \"2025-12-08T09:30:00.000Z\"\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Login with email and password"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/login",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "auth", "login"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n    \"user\": {\n        \"id\": \"cl4x6z8q80000q4xq3q5q6r7s\",\n        \"name\": \"John Doe\",\n        \"email\": \"john@example.com\"\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Verify Token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/verify",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "verify"]
+            },
+            "description": "Verify JWT token"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/auth/verify",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "auth", "verify"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n    \"user\": {\n        \"id\": \"cl4x6z8q80000q4xq3q5q6r7s\",\n        \"email\": \"john@example.com\",\n        \"name\": \"John Doe\"\n    }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Blogs",
+      "item": [
+        {
+          "name": "Get All Blogs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/blogs",
+              "host": ["{{base_url}}"],
+              "path": ["api", "blogs"]
+            },
+            "description": "Get all published blog posts"
+          }
+        },
+        {
+          "name": "Get Blog by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/blogs/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "blogs", "1"]
+            },
+            "description": "Get a single blog post by ID"
+          }
+        },
+        {
+          "name": "Create Blog (Auth Required)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"My First Blog Post\",\n    \"content\": \"This is the content of my first blog post...\",\n    \"description\": \"A brief description of the blog post\",\n    \"image\": \"https://example.com/images/blog1.jpg\",\n    \"published\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/blogs",
+              "host": ["{{base_url}}"],
+              "path": ["api", "blogs"]
+            },
+            "description": "Create a new blog post"
+          }
+        },
+        {
+          "name": "Update Blog (Auth Required)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Updated Blog Title\",\n    \"content\": \"Updated content...\",\n    \"description\": \"Updated description\",\n    \"image\": \"https://example.com/images/updated-blog.jpg\",\n    \"published\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/blogs/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "blogs", "1"]
+            },
+            "description": "Update an existing blog post"
+          }
+        },
+        {
+          "name": "Delete Blog (Auth Required)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/blogs/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "blogs", "1"]
+            },
+            "description": "Delete a blog post"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Projects",
+      "item": [
+        {
+          "name": "Get All Projects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/projects",
+              "host": ["{{base_url}}"],
+              "path": ["api", "projects"]
+            },
+            "description": "Get all projects"
+          }
+        },
+        {
+          "name": "Get Project by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/projects/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "projects", "1"]
+            },
+            "description": "Get a single project by ID"
+          }
+        },
+        {
+          "name": "Create Project (Auth Required)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"E-commerce Website\",\n    \"description\": \"A full-stack e-commerce platform\",\n    \"image\": \"https://example.com/images/project1.jpg\",\n    \"demoUrl\": \"https://ecommerce-demo.example.com\",\n    \"githubUrl\": \"https://github.com/username/ecommerce\",\n    \"technologies\": [\"React\", \"Node.js\", \"MongoDB\"],\n    \"published\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/projects",
+              "host": ["{{base_url}}"],
+              "path": ["api", "projects"]
+            },
+            "description": "Create a new project"
+          }
+        },
+        {
+          "name": "Update Project (Auth Required)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Updated E-commerce Website\",\n    \"description\": \"An improved version of our e-commerce platform\",\n    \"image\": \"https://example.com/images/updated-project1.jpg\",\n    \"demoUrl\": \"https://ecommerce-v2.example.com\",\n    \"githubUrl\": \"https://github.com/username/ecommerce-v2\",\n    \"technologies\": [\"React\", \"Next.js\", \"Node.js\", \"MongoDB\"],\n    \"published\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/projects/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "projects", "1"]
+            },
+            "description": "Update an existing project"
+          }
+        },
+        {
+          "name": "Delete Project (Auth Required)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/projects/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "projects", "1"]
+            },
+            "description": "Delete a project"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000",
+      "type": "string",
+      "description": "Base URL for the API (default: http://localhost:5000)"
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "string",
+      "description": "JWT token obtained from login/register (will be set automatically after login/register)"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "exec": [
+          "// You can add pre-request scripts here if needed"
+        ],
+        "type": "text/javascript"
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "exec": [
+          "// Set the auth_token variable from the login/register response",
+          "if (pm.response.code === 200 || pm.response.code === 201) {",
+          "    const response = pm.response.json();",
+          "    if (response.token) {",
+          "        pm.environment.set('auth_token', response.token);",
+          "    }",
+          "}"
+        ],
+        "type": "text/javascript"
+      }
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // URL is now configured in prisma.config.ts
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Blog {
+  id          String   @id @default(cuid())
+  title       String
+  content     String   @db.Text
+  description String
+  image       String?
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @db.Text
+  thumbnail   String?
+  liveUrl     String?
+  githubUrl   String?
+  features    String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
