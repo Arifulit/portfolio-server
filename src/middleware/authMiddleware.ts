@@ -17,16 +17,23 @@ export const authMiddleware = (
 ): void => {
   try {
     const authHeader = req.headers.authorization;
+    // Support multiple token sources: Authorization header (Bearer), body.token, query.token
+    let token: string | undefined = undefined;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+    } else if (typeof req.body?.token === 'string') {
+      token = req.body.token;
+    } else if (typeof req.query?.token === 'string') {
+      token = req.query.token as string;
+    }
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    if (!token) {
       res.status(401).json({ 
         success: false,
-        message: 'No token provided. Please include Bearer token in Authorization header' 
+        message: 'No token provided. Include Bearer token or provide token in body/query' 
       });
       return;
     }
-
-    const token = authHeader.split(' ')[1];
 
     if (!process.env.JWT_SECRET) {
       console.error('JWT_SECRET is not defined in environment variables');
