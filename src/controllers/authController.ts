@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import prisma from '../utils/prisma';
@@ -214,7 +214,7 @@ export const verifyToken = async (req: Request, res: Response): Promise<void> =>
 };
 
 // Logout user
-export const logout = async (req: Request, res: Response): Promise<void> => {
+export const logout = async (_req: Request, res: Response): Promise<void> => {
   try {
     // In a real app, you might want to invalidate the token here
     res.status(200).json({

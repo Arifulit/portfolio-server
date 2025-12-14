@@ -2,6 +2,43 @@ import { Response } from 'express';
 import prisma from '../utils/prisma';
 import { AuthRequest } from '../middleware/authMiddleware';
 
+// Dashboard blog stats (private)
+export const getBlogStats = async (_req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const [total, published, drafts, recent] = await Promise.all([
+      prisma.blog.count(),
+      prisma.blog.count({ where: { published: true } }),
+      prisma.blog.count({ where: { published: false } }),
+      prisma.blog.findMany({
+        orderBy: { createdAt: 'desc' },
+        take: 5,
+        select: {
+          id: true,
+          title: true,
+          published: true,
+          createdAt: true,
+        },
+      }),
+    ]);
+
+    res.json({
+      success: true,
+      data: {
+        total,
+        published,
+        drafts,
+        recent,
+      },
+    });
+  } catch (error) {
+    console.error('Get blog stats error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch blog statistics',
+    });
+  }
+};
+
 // Get all published blogs (public)
 export const getAllBlogs = async (req: AuthRequest, res: Response): Promise<void> => {
   try {

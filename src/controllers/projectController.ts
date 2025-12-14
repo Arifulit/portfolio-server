@@ -284,7 +284,7 @@ export const deleteProject = async (req: AuthRequest, res: Response): Promise<vo
 };
 
 // Get project statistics (private)
-export const getProjectStats = async (req: AuthRequest, res: Response): Promise<void> => {
+export const getProjectStats = async (_req: AuthRequest, res: Response): Promise<void> => {
   try {
     const totalProjects = await prisma.project.count();
 
