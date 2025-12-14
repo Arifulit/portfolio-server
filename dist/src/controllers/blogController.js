@@ -3,8 +3,45 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.togglePublishStatus = exports.deleteBlog = exports.updateBlog = exports.createBlog = exports.getAllBlogsForDashboard = exports.getBlogById = exports.getAllBlogs = void 0;
+exports.togglePublishStatus = exports.deleteBlog = exports.updateBlog = exports.createBlog = exports.getAllBlogsForDashboard = exports.getBlogById = exports.getAllBlogs = exports.getBlogStats = void 0;
 const prisma_1 = __importDefault(require("../utils/prisma"));
+// Dashboard blog stats (private)
+const getBlogStats = async (_req, res) => {
+    try {
+        const [total, published, drafts, recent] = await Promise.all([
+            prisma_1.default.blog.count(),
+            prisma_1.default.blog.count({ where: { published: true } }),
+            prisma_1.default.blog.count({ where: { published: false } }),
+            prisma_1.default.blog.findMany({
+                orderBy: { createdAt: 'desc' },
+                take: 5,
+                select: {
+                    id: true,
+                    title: true,
+                    published: true,
+                    createdAt: true,
+                },
+            }),
+        ]);
+        res.json({
+            success: true,
+            data: {
+                total,
+                published,
+                drafts,
+                recent,
+            },
+        });
+    }
+    catch (error) {
+        console.error('Get blog stats error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch blog statistics',
+        });
+    }
+};
+exports.getBlogStats = getBlogStats;
 // Get all published blogs (public)
 const getAllBlogs = async (req, res) => {
     try {

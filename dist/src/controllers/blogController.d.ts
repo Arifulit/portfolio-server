@@ -1,5 +1,6 @@
 import { Response } from 'express';
 import { AuthRequest } from '../middleware/authMiddleware';
+export declare const getBlogStats: (_req: AuthRequest, res: Response) => Promise<void>;
 export declare const getAllBlogs: (req: AuthRequest, res: Response) => Promise<void>;
 export declare const getBlogById: (req: AuthRequest, res: Response) => Promise<void>;
 export declare const getAllBlogsForDashboard: (req: AuthRequest, res: Response) => Promise<void>;
