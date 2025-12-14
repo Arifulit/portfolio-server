@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import prisma from "../utils/prisma";
+import { Request, Response } from 'express';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import prisma from '../utils/prisma';
 
 declare global {
   namespace Express {
@@ -18,9 +18,9 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
     // Validation
     if (!name || !email || !password) {
-      res.status(400).json({
+      res.status(400).json({ 
         success: false,
-        message: "Name, email and password are required",
+        message: 'Name, email and password are required' 
       });
       return;
     }
@@ -28,18 +28,18 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     // Email format validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      res.status(400).json({
+      res.status(400).json({ 
         success: false,
-        message: "Invalid email format",
+        message: 'Invalid email format' 
       });
       return;
     }
 
     // Password length validation
     if (password.length < 6) {
-      res.status(400).json({
+      res.status(400).json({ 
         success: false,
-        message: "Password must be at least 6 characters long",
+        message: 'Password must be at least 6 characters long' 
       });
       return;
     }
@@ -50,9 +50,9 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     });
 
     if (existingUser) {
-      res.status(400).json({
+      res.status(400).json({ 
         success: false,
-        message: "User already exists with this email",
+        message: 'User already exists with this email' 
       });
       return;
     }
@@ -80,29 +80,27 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     const token = jwt.sign(
       { userId: user.id, email: user.email },
       process.env.JWT_SECRET!,
-      { expiresIn: "7d" }
+      { expiresIn: '7d' }
     );
 
-    res.cookie("token", token, {
+    res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // HTTPS এ cookie পাঠাবে
-      sameSite: "none", // cross-site request allow করতে
-      domain: ".portfolio-client-phi-ten.vercel.app", // frontend domain
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 দিন
-      path: "/",
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.status(201).json({
       success: true,
-      message: "User registered successfully",
+      message: 'User registered successfully',
       token,
       user,
     });
   } catch (error) {
-    console.error("Registration error:", error);
-    res.status(500).json({
+    console.error('Registration error:', error);
+    res.status(500).json({ 
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error' 
     });
   }
 };
@@ -114,9 +112,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     // Validation
     if (!email || !password) {
-      res.status(400).json({
+      res.status(400).json({ 
         success: false,
-        message: "Email and password are required",
+        message: 'Email and password are required' 
       });
       return;
     }
@@ -127,9 +125,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     });
 
     if (!user) {
-      res.status(401).json({
+      res.status(401).json({ 
         success: false,
-        message: "Invalid email or password",
+        message: 'Invalid email or password' 
       });
       return;
     }
@@ -138,9 +136,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      res.status(401).json({
+      res.status(401).json({ 
         success: false,
-        message: "Invalid email or password",
+        message: 'Invalid email or password' 
       });
       return;
     }
@@ -149,21 +147,19 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const token = jwt.sign(
       { userId: user.id, email: user.email },
       process.env.JWT_SECRET!,
-      { expiresIn: "7d" }
+      { expiresIn: '7d' }
     );
 
-    res.cookie("token", token, {
+    res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // HTTPS এ cookie পাঠাবে
-      sameSite: "none", // cross-site request allow করতে
-      domain: ".portfolio-client-phi-ten.vercel.app", // frontend domain
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 দিন
-      path: "/",
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.json({
       success: true,
-      message: "Login successful",
+      message: 'Login successful',
       token,
       user: {
         id: user.id,
@@ -172,64 +168,61 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       },
     });
   } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({
+    console.error('Login error:', error);
+    res.status(500).json({ 
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error' 
     });
   }
 };
 
 // Verify token and get current user
-export const verifyToken = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const verifyToken = async (req: Request, res: Response): Promise<void> => {
   try {
     const authHeader = req.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      res.status(401).json({
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      res.status(401).json({ 
         success: false,
-        message: "No token provided",
+        message: 'No token provided' 
       });
       return;
     }
 
-    const token = authHeader.split(" ")[1];
+    const token = authHeader.split(' ')[1];
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { 
       userId: string;
       email: string;
     };
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
-      select: {
-        id: true,
-        email: true,
+      select: { 
+        id: true, 
+        email: true, 
         name: true,
-        createdAt: true,
+        createdAt: true 
       },
     });
 
     if (!user) {
-      res.status(401).json({
+      res.status(401).json({ 
         success: false,
-        message: "User not found",
+        message: 'User not found' 
       });
       return;
     }
 
-    res.json({
+    res.json({ 
       success: true,
-      user,
+      user 
     });
   } catch (error) {
-    console.error("Token verification error:", error);
-    res.status(401).json({
+    console.error('Token verification error:', error);
+    res.status(401).json({ 
       success: false,
-      message: "Invalid or expired token",
+      message: 'Invalid or expired token' 
     });
   }
 };
@@ -237,38 +230,35 @@ export const verifyToken = async (
 // Logout user
 export const logout = async (_req: Request, res: Response): Promise<void> => {
   try {
-    res.clearCookie("token", {
+    res.clearCookie('token', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
     });
 
     // In a real app, you might want to invalidate the token here
     res.status(200).json({
       success: true,
-      message: "Logged out successfully",
+      message: 'Logged out successfully'
     });
   } catch (error) {
-    console.error("Logout error:", error);
+    console.error('Logout error:', error);
     res.status(500).json({
       success: false,
-      message: "Error logging out",
-      error: error instanceof Error ? error.message : "Unknown error",
+      message: 'Error logging out',
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 };
 
 // Get current user
-export const getCurrentUser = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const getCurrentUser = async (req: Request, res: Response): Promise<void> => {
   try {
     // The user should be attached to the request by the auth middleware
     if (!req.user) {
       res.status(401).json({
         success: false,
-        message: "Not authenticated",
+        message: 'Not authenticated'
       });
       return;
     }
@@ -277,37 +267,34 @@ export const getCurrentUser = async (
     const { password, ...userWithoutPassword } = req.user;
     res.status(200).json({
       success: true,
-      user: userWithoutPassword,
+      user: userWithoutPassword
     });
   } catch (error) {
-    console.error("Get current user error:", error);
+    console.error('Get current user error:', error);
     res.status(500).json({
       success: false,
-      message: "Error fetching user data",
-      error: error instanceof Error ? error.message : "Unknown error",
+      message: 'Error fetching user data',
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 };
 
 // Get user profile
-export const getProfile = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const getProfile = async (req: Request, res: Response): Promise<void> => {
   try {
     const authHeader = req.headers.authorization;
-    const token = authHeader?.split(" ")[1];
+    const token = authHeader?.split(' ')[1];
 
     if (!token) {
-      res.status(401).json({
+      res.status(401).json({ 
         success: false,
-        message: "No token provided",
+        message: 'No token provided' 
       });
       return;
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
-      userId: string;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { 
+      userId: string 
     };
 
     const user = await prisma.user.findUnique({
@@ -322,9 +309,9 @@ export const getProfile = async (
     });
 
     if (!user) {
-      res.status(404).json({
+      res.status(404).json({ 
         success: false,
-        message: "User not found",
+        message: 'User not found' 
       });
       return;
     }
@@ -334,10 +321,10 @@ export const getProfile = async (
       user,
     });
   } catch (error) {
-    console.error("Get profile error:", error);
-    res.status(500).json({
+    console.error('Get profile error:', error);
+    res.status(500).json({ 
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error' 
     });
   }
 };
