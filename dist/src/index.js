@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
 const blogRoutes_1 = __importDefault(require("./routes/blogRoutes"));
 const projectRoutes_1 = __importDefault(require("./routes/projectRoutes"));
@@ -21,6 +22,7 @@ app.use((0, cors_1.default)({
 }));
 app.use(express_1.default.json({ limit: '10mb' }));
 app.use(express_1.default.urlencoded({ extended: true, limit: '10mb' }));
+app.use((0, cookie_parser_1.default)());
 // Request logging middleware
 app.use((req, _res, next) => {
     console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);

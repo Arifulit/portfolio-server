@@ -83,6 +83,13 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       { expiresIn: '7d' }
     );
 
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
     res.status(201).json({
       success: true,
       message: 'User registered successfully',
@@ -142,6 +149,13 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       process.env.JWT_SECRET!,
       { expiresIn: '7d' }
     );
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
     res.json({
       success: true,
@@ -216,6 +230,12 @@ export const verifyToken = async (req: Request, res: Response): Promise<void> =>
 // Logout user
 export const logout = async (_req: Request, res: Response): Promise<void> => {
   try {
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+    });
+
     // In a real app, you might want to invalidate the token here
     res.status(200).json({
       success: true,

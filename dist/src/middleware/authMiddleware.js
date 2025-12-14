@@ -8,10 +8,13 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const authMiddleware = (req, res, next) => {
     try {
         const authHeader = req.headers.authorization;
-        // Support multiple token sources: Authorization header (Bearer), body.token, query.token
+        // Support multiple token sources: Authorization header (Bearer), cookie token, body.token, query.token
         let token = undefined;
         if (authHeader && authHeader.startsWith('Bearer ')) {
             token = authHeader.split(' ')[1];
+        }
+        else if (req.cookies && typeof req.cookies.token === 'string') {
+            token = req.cookies.token;
         }
         else if (typeof req.body?.token === 'string') {
             token = req.body.token;
